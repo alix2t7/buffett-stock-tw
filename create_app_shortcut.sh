@@ -56,6 +56,11 @@ PORT=3000
 URL="http://localhost:\$PORT"
 PROJECT="${PROJECT_DIR}"
 
+# ── 自動啟用 Python venv（如果存在）──
+if [ -f "\$PROJECT/.venv/bin/activate" ]; then
+    source "\$PROJECT/.venv/bin/activate"
+fi
+
 # ── 檢查專案目錄 ──
 if [ ! -d "\$PROJECT" ]; then
     echo "ERROR: Project not found: \$PROJECT"

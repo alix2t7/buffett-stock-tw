@@ -1,5 +1,6 @@
 # 依賴
 node_modules
+.venv/
 dist
 dist-ssr
 *.local

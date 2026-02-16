@@ -156,8 +156,11 @@ step "6/$TOTAL_STEPS" "安裝依賴與初始設定"
 echo "   📦 npm install..."
 npm install
 
-echo "   📦 pip install..."
-python3 -m pip install -r requirements.txt --quiet
+echo "   📦 建立 Python 虛擬環境 + 安裝依賴..."
+if [[ ! -d .venv ]]; then
+    python3 -m venv .venv
+fi
+.venv/bin/pip install -r requirements.txt --quiet
 
 # 建立設定檔
 if [[ ! -f stock_config.local.json ]] && [[ -f stock_config.example.json ]]; then

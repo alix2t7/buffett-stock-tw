@@ -10,6 +10,11 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 # 切換到專案目錄
 cd "$(dirname "$0")"
 
+# 自動啟用 Python venv（如果存在）
+if [ -f .venv/bin/activate ]; then
+    source .venv/bin/activate
+fi
+
 PORT=3000
 URL="http://localhost:$PORT"
 

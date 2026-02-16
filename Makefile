@@ -3,7 +3,13 @@
 # 用法：make <target>
 # ══════════════════════════════════════════════════════════════
 
-PYTHON  := python3
+# 自動偵測 .venv — 若存在則使用 venv 內的 python3
+ifneq ($(wildcard .venv/bin/python3),)
+  PYTHON := .venv/bin/python3
+else
+  PYTHON := python3
+endif
+
 NPX     := npx
 PORT    := 3000
 
@@ -38,10 +44,10 @@ help:
 install:
 	@echo "📦 安裝前端依賴..."
 	npm install
-	@echo "📦 檢查 Python 依賴..."
-	$(PYTHON) -c "import yfinance, sqlite3" 2>/dev/null || \
-		(echo "⚠️  請先執行: pip install -r requirements.txt" && exit 1)
-	@echo "✅ 依賴就緒"
+	@echo "📦 設定 Python 虛擬環境..."
+	@if [ ! -d .venv ]; then python3 -m venv .venv; fi
+	.venv/bin/pip install -r requirements.txt --quiet
+	@echo "✅ 依賴就緒（Python venv: .venv/）"
 
 # ── 開發伺服器 ───────────────────────────────────────────
 dev:
