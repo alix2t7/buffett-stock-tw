@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "stock_data.schema.json",
+  "title": "stock_data.json — 即時持股快照",
+  "description": "由 regenerate_stock_json.py 從 SQLite 產生，前端 dashboard.jsx 讀取。每次同步後重建。",
+  "type": "object",
+  "required": ["lastUpdate", "stocks"],
+  "properties": {
+    "lastUpdate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 產生時間，例如 2026-02-14T10:30:00"
+    },
+    "stocks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Stock" }
+    }
+  },
+  "$defs": {
+    "Stock": {
+      "type": "object",
+      "required": [
+        "ticker", "name", "sector", "price", "eps", "pe", "pb",
+        "roe", "dividendYield", "debtToEquity", "currentRatio",
+        "fcf", "bvps", "growthRate", "fetchError"
+      ],
+      "properties": {
+        "ticker":         { "type": "string",  "description": "台股代碼，如 '2330'", "pattern": "^[0-9A-Z]{4,6}$" },
+        "name":           { "type": "string",  "description": "公司簡稱" },
+        "sector":         { "type": "string",  "description": "產業分類（電子、金融、傳產…）" },
+        "price":          { "type": "number",  "description": "最新股價 (TWD)", "minimum": 0 },
+        "eps":            { "type": "number",  "description": "每股盈餘 (TWD)，可負值" },
+        "pe":             { "type": "number",  "description": "本益比 Price/EPS" },
+        "pb":             { "type": "number",  "description": "股價淨值比 Price/BookValue", "minimum": 0 },
+        "roe":            { "type": "number",  "description": "股東權益報酬率 (%)" },
+        "dividendYield":  { "type": "number",  "description": "現金殖利率 (%)", "minimum": 0 },
+        "debtToEquity":   { "type": "number",  "description": "負債權益比 D/E ratio", "minimum": 0 },
+        "currentRatio":   { "type": "number",  "description": "流動比率，0 表示資料缺失", "minimum": 0 },
+        "fcf":            { "type": "number",  "description": "自由現金流 (百萬 TWD)，0 表示資料缺失" },
+        "bvps":           { "type": "number",  "description": "每股淨值 (TWD)", "minimum": 0 },
+        "growthRate":     { "type": "number",  "description": "營收/盈餘成長率 (%)" },
+        "avgEps":         { "type": ["number", "null"], "description": "近 3 年平均 EPS。null = 歷史資料不足" },
+        "fcfPerShare":    { "type": ["number", "null"], "description": "TTM 每股自由現金流。null = 資料缺失" },
+        "avgFcfPerShare": { "type": ["number", "null"], "description": "近 3 年平均每股自由現金流。null = 資料不足" },
+        "historicalEps":  {
+          "type": "array",
+          "items": { "type": "number" },
+          "description": "歷史年度 EPS 陣列（舊→新），用於波動性計算。空陣列 = 無歷史資料"
+        },
+        "shareDilutionRate": { "type": ["number", "null"], "description": "年化股本稀釋率 (%)。null = 無法計算。負值 = 股本縮減" },
+        "fetchError":     { "type": "boolean", "description": "true = yfinance 抓取失敗，此筆為舊/空資料" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

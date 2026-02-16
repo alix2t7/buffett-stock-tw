@@ -1,0 +1,47 @@
+# 依賴
+node_modules
+dist
+dist-ssr
+*.local
+
+# 編輯器
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 日誌
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 資料庫與匯出檔
+*.db
+*.csv
+__pycache__/
+*.pyc
+
+# 執行期產生的數據 JSON（含個人持股資訊，不應提交）
+public/stock_data.json
+public/history_all.json
+public/history/
+
+# 個人持股設定（使用者自訂）
+stock_config.local.*
+
+# 內部開發文件
+HANDOFF.md
+
+# 環境變數
+.env
+.env.local
+.env.production

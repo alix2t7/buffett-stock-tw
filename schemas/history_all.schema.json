@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "history_all.schema.json",
+  "title": "history_all.json — 歷史價格與指標",
+  "description": "由 export_history_json.py 從 SQLite 產生。每支股票含多筆歷史快照（通常為每日/每週），前端 HistoryChart.jsx 讀取。",
+  "type": "object",
+  "required": ["generatedAt", "history"],
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 產生時間"
+    },
+    "history": {
+      "type": "object",
+      "description": "以 ticker 為 key 的字典，值為時序陣列",
+      "patternProperties": {
+        "^[0-9A-Z]{4,6}$": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/HistoryPoint" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "HistoryPoint": {
+      "type": "object",
+      "required": ["date", "price"],
+      "properties": {
+        "date":          { "type": "string",  "format": "date", "description": "YYYY-MM-DD" },
+        "price":         { "type": "number",  "description": "收盤價 (TWD)", "minimum": 0 },
+        "eps":           { "type": ["number", "null"], "description": "當期 EPS (TWD)" },
+        "pe":            { "type": ["number", "null"], "description": "本益比" },
+        "pb":            { "type": ["number", "null"], "description": "股價淨值比" },
+        "roe":           { "type": ["number", "null"], "description": "ROE (%)" },
+        "dividendYield": { "type": ["number", "null"], "description": "殖利率 (%)" },
+        "growthRate":    { "type": ["number", "null"], "description": "成長率 (%)" }
+      },
+      "additionalProperties": false
+    }
+  }
+}
