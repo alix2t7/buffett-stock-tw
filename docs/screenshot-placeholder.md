@@ -1,3 +1,1 @@
-<!-- Placeholder: replace with an actual screenshot -->
-<!-- Take a screenshot of the dashboard and save it here as screenshot.png -->
-<!-- Then update README.md to reference it -->
+此檔案已由實際截圖 `screenshot.png` 取代，README.md 已更新引用。

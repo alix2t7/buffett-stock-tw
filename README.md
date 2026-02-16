@@ -13,8 +13,7 @@
 - ➕ **一鍵管理** — 從儀表板直接新增 / 移除持股
 - ⏰ **自動排程** — macOS launchd 每日自動同步
 
-<!-- 截圖（請將 docs/screenshot.png 替換為實際截圖）-->
-<!-- ![儀表板截圖](docs/screenshot.png) -->
+![儀表板截圖](docs/screenshot.png)
 
 ## 🏗️ 專案架構
 
