@@ -138,7 +138,9 @@ else
     if [[ -d "$INSTALL_DIR/.git" ]]; then
         warn "目錄已存在，執行 git pull 更新..."
         cd "$INSTALL_DIR"
-        git pull --rebase || true
+        git stash --quiet 2>/dev/null || true
+        git pull --rebase || git pull || true
+        git stash pop --quiet 2>/dev/null || true
     else
         echo "   Cloning 到 $INSTALL_DIR ..."
         git clone "$REPO_URL" "$INSTALL_DIR"
@@ -204,8 +206,12 @@ echo "   1. 編輯 stock_config.local.json（填入你的持股代碼）"
 echo "   2. 雙擊桌面「持股儀表板」（會自動同步資料）"
 echo ""
 
-# 詢問是否編輯持股清單
-read -rp "是否現在編輯持股清單？(y/N) " yn
+# 詢問是否編輯持股清單（從 /dev/tty 讀取，避免 curl | bash 時 stdin 衝突）
+if [[ -t 0 ]]; then
+    read -rp "是否現在編輯持股清單？(y/N) " yn
+else
+    read -rp "是否現在編輯持股清單？(y/N) " yn </dev/tty || yn="n"
+fi
 if [[ "$yn" =~ ^[Yy]$ ]]; then
     open -e "$INSTALL_DIR/stock_config.local.json"
 fi
