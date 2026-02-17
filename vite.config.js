@@ -1,6 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { spawn } from 'child_process'
+import { spawn, execSync } from 'child_process'
+import { existsSync } from 'fs'
+import { join } from 'path'
+
+// ─── Resolve Python: prefer .venv, fallback to system python3 ───
+function resolvePython() {
+  const venvPython = join(process.cwd(), '.venv', 'bin', 'python3')
+  if (existsSync(venvPython)) return venvPython
+  try { return execSync('which python3', { encoding: 'utf8' }).trim() } catch { return 'python3' }
+}
+const PYTHON = resolvePython()
 
 // ─── Validation constants ───
 const TICKER_RE = /^\d{4,6}$/
@@ -109,9 +119,9 @@ export default defineConfig({
             }
 
             const args = ['sync_portfolio.py', ...flags]
-            console.log(`\n🔄 [API] sync_portfolio.py ${flags.join(' ')}`)
+            console.log(`\n🔄 [API] ${PYTHON} sync_portfolio.py ${flags.join(' ')}`)
 
-            const proc = spawn('python3', args, {
+            const proc = spawn(PYTHON, args, {
               cwd: process.cwd(),
               env: { ...process.env, PYTHONUNBUFFERED: '1' },
             })
