@@ -309,18 +309,39 @@ def main():
                 print(f"  ⚠️ {ticker} 移除失敗: {e}")
                 failures.append(ticker)
 
-    # 強制重抓
-    if args.refresh and existing:
-        print(f"\n{'─' * 40}")
-        print(f"🔄 重新抓取 {len(existing)} 檔既有股票（統一抓取）")
-        for i, ticker in enumerate(sorted(existing)):
-            try:
-                unified_fetch_one(ticker)
-            except Exception as e:
-                print(f"    ⚠️ {ticker} 失敗: {e}")
-                failures.append(ticker)
-            if i < len(existing) - 1:
-                time.sleep(REQUEST_DELAY)
+    # 更新既有股票
+    if existing:
+        if args.refresh:
+            # --refresh: 完整重抓（即時報價 + 年報 + 歷史走勢 + 季報修正）
+            print(f"\n{'─' * 40}")
+            print(f"🔄 重新抓取 {len(existing)} 檔既有股票（統一抓取）")
+            for i, ticker in enumerate(sorted(existing)):
+                try:
+                    unified_fetch_one(ticker)
+                except Exception as e:
+                    print(f"    ⚠️ {ticker} 失敗: {e}")
+                    failures.append(ticker)
+                if i < len(existing) - 1:
+                    time.sleep(REQUEST_DELAY)
+        else:
+            # 預設: 輕量更新 — 只抓即時報價（Step 1）
+            print(f"\n{'─' * 40}")
+            print(f"📡 更新 {len(existing)} 檔既有股票即時報價")
+            for i, ticker in enumerate(sorted(existing)):
+                name = STOCK_NAME_MAPPING.get(ticker, ticker)
+                try:
+                    stock, symbol = resolve_ticker(ticker)
+                    if stock is None:
+                        print(f"  ⚠️ {ticker} ({name}) 無法解析，跳過")
+                        failures.append(ticker)
+                        continue
+                    info = stock.info
+                    save_current_snapshot(ticker, info)
+                except Exception as e:
+                    print(f"  ⚠️ {ticker} ({name}) 更新失敗: {e}")
+                    failures.append(ticker)
+                if i < len(existing) - 1:
+                    time.sleep(REQUEST_DELAY)
 
     # JSON
     regenerate_json()
